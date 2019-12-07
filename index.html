@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Overwatch Map Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+<title>Document</title>
+<style>
+html {
+  font-family: Verdana, Arial, sans-serif;
+}
+body {
+  margin: 1em;
+}
+h1 {
+  font-size: 1.5em;
+  margin: 0 0 0.333em;
+}
+h2 {
+  font-size: 1.2em;
+  margin: 0 0 0.417em;
+}
+p {
+  margin: 0 0 0.5em;
+}
+a {
+  color: #36a;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+#quiz {
+  margin: 0 auto;
+  max-width: 50em;
+}
+.answers {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 0 -0.5em;
+}
+.answer {
+  border: 1px solid #eee;
+  padding: 0.5em;
+  text-align: center;
+  flex-grow: 1;
+  width: 20em;
+  margin: 0 0 0.5em 0.5em;
+  cursor: pointer;
+}
+.answer.correct {
+  background: #1c2;
+}
+.answer.wrong {
+  background: #c12;
+}
+.answer img {
+  max-width: 100%;
+}
+.right {
+  text-align: right;
+}
+input[type=button], button {
+  font: inherit;
+  border: 1px solid #ccc;
+  outline: none;
+  padding: 0.3em;
+  background: #eee;
+  color: #333;
+}
+input[type=button]:hover, button:hover {
+  background: #ddd;
+}
+input[type=button]:active, button:active {
+  background: #ccc;
+}
+</style>
+</head>
+<body>
+<div id="quiz">
+  <h1>{{locale.title}}</h1>
+  <p>{{locale.answers}}: {{right}} {{locale.right}}, {{wrong}} {{locale.wrong}}. ({{score}}%)</p>
+  <h2>{{locale.question}} {{question.number}}</h2>
+  <div>
+    <p>{{question.text}}</p>
+  </div>
+  <div class="answers">
+    <div class="answer" :class="{wrong: i === question.selected && i !== question.correct, correct: question.selected >= 0 && i === question.correct}" v-for="(a, i) in question.answers" :key="i" @click="answer(i)">
+      <div v-if="a.img"><img :src="a.img" alt=""/></div>
+      <div v-if="a.text">{{a.text}}</div>
+    </div>
+  </div>
+  <p v-if="question.selected >= 0" class="right"><button @click="newQuestion">{{locale.nextQuestion}}</button></p>
+</div>
+<script src="vue.min.js"></script>
+<script>
+const images = {"maps":[{"map":"blizzard-world","images":["0101.jpg","0102.jpg","0103.jpg","0104.jpg","0105.jpg","0106.jpg","0107.jpg","0108.jpg","0109.jpg","0110.jpg","0111.jpg","0112.jpg","0113.jpg","0114.jpg","0115.jpg","0116.jpg","0117.jpg"]},{"map":"busan-downtown","images":["0201.jpg","0202.jpg","0203.jpg","0204.jpg","0205.jpg","0206.jpg","0207.jpg","0208.jpg","0209.jpg","0210.jpg","0211.jpg"]},{"map":"busan-meka-base","images":["0301.jpg","0302.jpg","0303.jpg","0304.jpg","0305.jpg","0306.jpg","0307.jpg","0308.jpg","0309.jpg","0310.jpg","0311.jpg","0312.jpg"]},{"map":"busan-sanctuary","images":["0401.jpg","0402.jpg","0403.jpg","0404.jpg","0405.jpg","0406.jpg","0407.jpg","0408.jpg","0409.jpg"]},{"map":"dorado","images":["0501.jpg","0502.jpg","0503.jpg","0504.jpg","0505.jpg","0506.jpg","0507.jpg","0508.jpg","0509.jpg","0510.jpg","0511.jpg","0512.jpg","0513.jpg","0514.jpg","0515.jpg","0516.jpg","0517.jpg"]},{"map":"eichenwalde","images":["0601.jpg","0602.jpg","0603.jpg","0604.jpg","0605.jpg","0606.jpg","0607.jpg","0608.jpg","0609.jpg","0610.jpg","0611.jpg"]},{"map":"hanamura","images":["0701.jpg","0702.jpg","0703.jpg","0704.jpg","0705.jpg","0706.jpg","0707.jpg","0708.jpg","0709.jpg"]},{"map":"havana","images":["0801.jpg","0802.jpg","0803.jpg","0804.jpg","0805.jpg","0806.jpg","0807.jpg","0808.jpg","0809.jpg","0810.jpg","0811.jpg","0812.jpg","0813.jpg","0814.jpg","0815.jpg","0816.jpg","0817.jpg","0818.jpg","0819.jpg","0820.jpg","0821.jpg"]},{"map":"hollywood","images":["0901.jpg","0902.jpg","0903.jpg","0904.jpg","0905.jpg","0906.jpg","0907.jpg","0908.jpg","0909.jpg","0910.jpg","0911.jpg","0912.jpg","0913.jpg"]},{"map":"horizon-lunar-colony","images":["1001.jpg","1002.jpg","1003.jpg","1004.jpg","1005.jpg","1006.jpg","1007.jpg","1008.jpg","1009.jpg","1010.jpg","1011.jpg","1012.jpg","1013.jpg"]},{"map":"ilios-lighthouse","images":["1101.jpg","1102.jpg","1103.jpg","1104.jpg","1105.jpg","1106.jpg","1107.jpg","1108.jpg"]},{"map":"ilios-ruins","images":["1201.jpg","1202.jpg","1203.jpg","1204.jpg","1205.jpg","1206.jpg","1207.jpg"]},{"map":"ilios-well","images":["1301.jpg","1302.jpg","1303.jpg","1304.jpg","1305.jpg","1306.jpg","1307.jpg"]},{"map":"junkertown","images":["1401.jpg","1402.jpg","1403.jpg","1404.jpg","1405.jpg","1406.jpg","1407.jpg","1408.jpg","1409.jpg","1410.jpg","1411.jpg","1412.jpg","1413.jpg","1414.jpg","1415.jpg","1416.jpg"]},{"map":"kings-row","images":["1501.jpg","1502.jpg","1503.jpg","1504.jpg","1505.jpg","1506.jpg","1507.jpg","1508.jpg","1509.jpg","1510.jpg","1511.jpg","1512.jpg","1513.jpg"]},{"map":"lijiang-tower-control-center","images":["1601.jpg","1602.jpg","1603.jpg","1604.jpg","1605.jpg","1606.jpg","1607.jpg","1608.jpg"]},{"map":"lijiang-tower-garden","images":["1701.jpg","1702.jpg","1703.jpg","1704.jpg","1705.jpg","1706.jpg","1707.jpg","1708.jpg"]},{"map":"lijiang-tower-night-market","images":["1801.jpg","1802.jpg","1803.jpg","1804.jpg","1805.jpg","1806.jpg","1807.jpg","1808.jpg"]},{"map":"nepal-sanctum","images":["1901.jpg","1902.jpg","1903.jpg","1904.jpg","1905.jpg","1906.jpg","1907.jpg","1908.jpg","1909.jpg"]},{"map":"nepal-shrine","images":["2001.jpg","2002.jpg","2003.jpg","2004.jpg","2005.jpg","2006.jpg","2007.jpg","2008.jpg"]},{"map":"nepal-village","images":["2101.jpg","2102.jpg","2103.jpg","2104.jpg","2105.jpg","2106.jpg","2107.jpg","2108.jpg"]},{"map":"numbani","images":["2201.jpg","2202.jpg","2203.jpg","2204.jpg","2205.jpg","2206.jpg","2207.jpg","2208.jpg","2209.jpg","2210.jpg","2211.jpg","2212.jpg","2213.jpg"]},{"map":"oasis-city-center","images":["2301.jpg","2302.jpg","2303.jpg","2304.jpg","2305.jpg","2306.jpg","2307.jpg","2308.jpg","2309.jpg","2310.jpg"]},{"map":"oasis-gardens","images":["2401.jpg","2402.jpg","2403.jpg","2404.jpg","2405.jpg","2406.jpg","2407.jpg","2408.jpg","2409.jpg","2410.jpg","2411.jpg"]},{"map":"oasis-university","images":["2501.jpg","2502.jpg","2503.jpg","2504.jpg","2505.jpg","2506.jpg","2507.jpg","2508.jpg","2509.jpg"]},{"map":"paris","images":["2601.jpg","2602.jpg","2603.jpg","2604.jpg","2605.jpg","2606.jpg","2607.jpg","2608.jpg","2609.jpg","2610.jpg","2611.jpg","2612.jpg","2613.jpg","2614.jpg","2615.jpg","2616.jpg"]},{"map":"rialto","images":["2701.jpg","2702.jpg","2703.jpg","2704.jpg","2705.jpg","2706.jpg","2707.jpg","2708.jpg","2709.jpg","2710.jpg","2711.jpg","2712.jpg","2713.jpg","2714.jpg","2715.jpg","2716.jpg"]},{"map":"route-66","images":["2801.jpg","2802.jpg","2803.jpg","2804.jpg","2805.jpg","2806.jpg","2807.jpg","2808.jpg","2809.jpg","2810.jpg","2811.jpg","2812.jpg","2813.jpg","2814.jpg"]},{"map":"temple-of-anubis","images":["2901.jpg","2902.jpg","2903.jpg","2904.jpg","2905.jpg","2906.jpg","2907.jpg","2908.jpg","2909.jpg","2910.jpg","2911.jpg"]},{"map":"volskaya-industries","images":["3001.jpg","3002.jpg","3003.jpg","3004.jpg","3005.jpg","3006.jpg","3007.jpg","3008.jpg","3009.jpg","3010.jpg"]},{"map":"watchpoint-gibraltar","images":["3101.jpg","3102.jpg","3103.jpg","3104.jpg","3105.jpg","3106.jpg","3107.jpg","3108.jpg","3109.jpg","3110.jpg","3111.jpg","3112.jpg","3113.jpg","3114.jpg","3115.jpg","3116.jpg","3117.jpg","3118.jpg"]}]}
+const en = () => ({
+  "title": "Overwatch Map Quiz",
+  "question": "Question",
+  "answers": "Answers",
+  "right": "right",
+  "wrong": "wrong",
+  "nextQuestion": "Next Question",
+  "whichMap": "Which map is %s?",
+  "map": {
+    "blizzard-world": "Blizzard World",
+    "busan-downtown": "Busan Downtown",
+    "busan-meka-base": "Busan MEKA Base",
+    "busan-sanctuary": "Busan Sanctuary",
+    "dorado": "Dorado",
+    "eichenwalde": "Eichenwalde",
+    "hanamura": "Hanamura",
+    "havana": "Havana",
+    "hollywood": "Hollywood",
+    "horizon-lunar-colony": "Horizon Lunar Colony",
+    "ilios-lighthouse": "Ilios Lighthouse",
+    "ilios-ruins": "Ilios Ruins",
+    "ilios-well": "Ilios Well",
+    "junkertown": "Junkertown",
+    "kings-row": "King’s Row",
+    "lijiang-tower-control-center": "Lijiang Tower Control Center",
+    "lijiang-tower-garden": "Lijiang Tower Garden",
+    "lijiang-tower-night-market": "Lijiang Tower Night Market",
+    "nepal-sanctum": "Nepal Sanctum",
+    "nepal-shrine": "Nepal Shrine",
+    "nepal-village": "Nepal Village",
+    "numbani": "Numbani",
+    "oasis-city-center": "Oasis City Center",
+    "oasis-gardens": "Oasis Gardens",
+    "oasis-university": "Oasis University",
+    "paris": "Paris",
+    "rialto": "Rialto",
+    "route-66": "Route 66",
+    "temple-of-anubis": "Temple of Anubis",
+    "volskaya-industries": "Volskaya Industries",
+    "watchpoint-gibraltar": "Watchpoint: Gibraltar",
+  },
+})
+let locale = en()
+const sample = a => a[Math.floor(Math.random() * a.length)]
+const sample_n = (a, n) => {
+  let r = []
+  while (r.length < n) {
+    let i = Math.floor(Math.random() * a.length)
+    if (!r.includes(i)) {
+      r.push(i)
+    }
+  }
+  return r.map(i => a[i])
+}
+const question = (number) => {
+  let selection = sample_n(images.maps, 4)
+  let correct = Math.floor(Math.random() * selection.length)
+  let question = locale.whichMap.replace('%s', locale.map[selection[correct].map])
+  let answers = selection.map(m => {
+    return {
+      img: 'img/' + sample(m.images),
+    }
+  })
+  return {
+    number,
+    answers,
+    correct,
+    text: question,
+    selected: -1,
+  }
+}
+const app = new Vue({
+  el: '#quiz',
+  data: {
+    locale: en(),
+    right: 0,
+    wrong: 0,
+    question: question(1),
+  },
+  computed: {
+    score() {
+      return Math.round(100 * this.right / (this.right + this.wrong)) | 0
+    },
+  },
+  methods: {
+    answer(n) {
+      if (this.question.selected < 0) {
+        this.question.selected = n
+        if (n === this.question.correct) {
+          this.right += 1
+        } else {
+          this.wrong += 1
+        }
+      }
+    },
+    newQuestion() {
+      this.question = question(this.question.number + 1)
+    }
+  }
+})
+</script>
+</body>
+</html>
