@@ -88,7 +88,7 @@ input[type=button]:active, button:active {
 <body>
 <div id="quiz">
   <h1>{{locale.title}}</h1>
-  <p>{{locale.answers}}: {{right}} {{locale.right}}, {{wrong}} {{locale.wrong}}. ({{score}}%)</p>
+  <p>{{locale.answers}}: {{correct}} {{locale.correct}}, {{wrong}} {{locale.wrong}}. ({{score}}%)</p>
   <h2>{{locale.question}} {{question.number}}</h2>
   <div>
     <p>{{question.text}}</p>
@@ -109,7 +109,7 @@ const en = () => ({
   "title": "Overwatch Map Quiz",
   "question": "Question",
   "answers": "Answers",
-  "right": "right",
+  "correct": "correct",
   "wrong": "wrong",
   "nextQuestion": "Next Question",
   "whichMap": "Which map is %s?",
@@ -199,13 +199,13 @@ const app = new Vue({
   el: '#quiz',
   data: {
     locale: en(),
-    right: 0,
+    correct: 0,
     wrong: 0,
     question: question(1),
   },
   computed: {
     score() {
-      return Math.round(100 * this.right / (this.right + this.wrong)) | 0
+      return Math.round(100 * this.correct / (this.correct + this.wrong)) | 0
     },
   },
   methods: {
@@ -213,7 +213,7 @@ const app = new Vue({
       if (this.question.selected < 0) {
         this.question.selected = n
         if (n === this.question.correct) {
-          this.right += 1
+          this.correct += 1
         } else {
           this.wrong += 1
         }
