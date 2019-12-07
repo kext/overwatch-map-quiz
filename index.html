@@ -158,7 +158,7 @@ let locale = en()
 const sample = a => a[Math.floor(Math.random() * a.length)]
 const sample_n = (a, n) => {
   let r = []
-  while (r.length < n) {
+  while (r.length < n && r.length < a.length) {
     let i = Math.floor(Math.random() * a.length)
     if (!r.includes(i)) {
       r.push(i)
