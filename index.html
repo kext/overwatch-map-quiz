@@ -41,7 +41,7 @@ a:hover {
   margin: 0 0 0 -0.5em;
 }
 .answer {
-  border: 1px solid #eee;
+  border: 1px solid #ccc;
   padding: 0.5em;
   text-align: center;
   flex-grow: 1;
@@ -55,9 +55,16 @@ a:hover {
 .answer.wrong {
   background: #c12;
 }
-.answer img {
-  max-width: 100%;
+.answers.choosing .answer:hover {
+  background: #eee;
+}
+img {
+  width: 100%;
   vertical-align: middle;
+}
+p.img {
+  border: 1px solid #ccc;
+  padding: 1px;
 }
 .right {
   text-align: right;
@@ -85,14 +92,15 @@ input[type=button]:active, button:active {
   <h2>{{locale.question}} {{question.number}}</h2>
   <div>
     <p>{{question.text}}</p>
+    <p v-if="question.img" class="img"><img :src="question.img" alt=""/></p>
   </div>
-  <div class="answers">
-    <div class="answer" :class="{wrong: i === question.selected && i !== question.correct, correct: question.selected >= 0 && i === question.correct}" v-for="(a, i) in question.answers" :key="i" @click="answer(i)">
+  <div class="answers" :class="{choosing: question.selected === -1}">
+    <div class="answer" v-for="(a, i) in question.answers" :key="i" :class="answerClass(i)" @click="answer(i)">
       <div v-if="a.img"><img :src="a.img" alt=""/></div>
       <div v-if="a.text">{{a.text}}</div>
     </div>
   </div>
-  <p v-if="question.selected >= 0" class="right"><button @click="newQuestion">{{locale.nextQuestion}}</button></p>
+  <p v-if="question.selected &gt;= 0" class="right"><button @click="newQuestion">{{locale.nextQuestion}}</button></p>
 </div>
 <script src="vue.min.js"></script>
 <script>
@@ -105,6 +113,7 @@ const en = () => ({
   "wrong": "wrong",
   "nextQuestion": "Next Question",
   "whichMap": "Which map is %s?",
+  "that": "this",
   "map": {
     "blizzard-world": "Blizzard World",
     "busan-downtown": "Busan Downtown",
@@ -154,18 +163,36 @@ const sample_n = (a, n) => {
 const question = (number) => {
   let selection = sample_n(images.maps, 4)
   let correct = Math.floor(Math.random() * selection.length)
-  let question = locale.whichMap.replace('%s', locale.map[selection[correct].map])
-  let answers = selection.map(m => {
+  if (Math.random() < 0.5) {
+    let question = locale.whichMap.replace('%s', locale.map[selection[correct].map])
+    let answers = selection.map(m => {
+      return {
+        img: 'img/' + sample(m.images),
+      }
+    })
     return {
-      img: 'img/' + sample(m.images),
+      number,
+      answers,
+      correct,
+      text: question,
+      selected: -1,
     }
-  })
-  return {
-    number,
-    answers,
-    correct,
-    text: question,
-    selected: -1,
+  } else {
+    let question = locale.whichMap.replace('%s', locale.that)
+    let img = 'img/' + sample(selection[correct].images)
+    let answers = selection.map(m => {
+      return {
+        text: locale.map[m.map],
+      }
+    })
+    return {
+      number,
+      answers,
+      correct,
+      text: question,
+      img,
+      selected: -1,
+    }
   }
 }
 const app = new Vue({
@@ -194,6 +221,12 @@ const app = new Vue({
     },
     newQuestion() {
       this.question = question(this.question.number + 1)
+    },
+    answerClass(i) {
+      return {
+        wrong: i === this.question.selected && i !== this.question.correct,
+        correct: this.question.selected >= 0 && i === this.question.correct,
+      }
     }
   }
 })
