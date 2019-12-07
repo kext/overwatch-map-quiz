@@ -83,6 +83,11 @@ input[type=button]:hover, button:hover {
 input[type=button]:active, button:active {
   background: #ccc;
 }
+.preload {
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
 </style>
 </head>
 <body>
@@ -96,11 +101,12 @@ input[type=button]:active, button:active {
   </div>
   <div class="answers" :class="{choosing: question.selected === -1}">
     <div class="answer" v-for="(a, i) in question.answers" :key="i" :class="answerClass(i)" @click="answer(i)">
-      <div v-if="a.img"><img :src="a.img" alt=""/></div>
+      <div v-if="a.img"><img :key="a.img" :src="a.img" alt=""/></div>
       <div v-if="a.text">{{a.text}}</div>
     </div>
   </div>
   <p v-if="question.selected &gt;= 0" class="right"><button @click="newQuestion">{{locale.nextQuestion}}</button></p>
+  <div class="preload"><img v-for="p in preload" :key="p" :src="p" alt=""/></div>
 </div>
 <script src="vue.min.js"></script>
 <script>
@@ -202,10 +208,22 @@ const app = new Vue({
     correct: 0,
     wrong: 0,
     question: question(1),
+    nextQuestion: question(2),
   },
   computed: {
     score() {
       return Math.round(100 * this.correct / (this.correct + this.wrong)) | 0
+    },
+    preload() {
+      let p = []
+      if (this.nextQuestion.img) {
+        p.push(this.nextQuestion.img)
+      }
+      for (let i = 0; i < this.nextQuestion.answers.length; ++i) {
+        let a = this.nextQuestion.answers[i]
+        if (a.img && !p.includes(a.img)) p.push(a.img)
+      }
+      return p
     },
   },
   methods: {
@@ -220,7 +238,8 @@ const app = new Vue({
       }
     },
     newQuestion() {
-      this.question = question(this.question.number + 1)
+      this.question = this.nextQuestion
+      this.nextQuestion = question(this.question.number + 1)
     },
     answerClass(i) {
       return {
