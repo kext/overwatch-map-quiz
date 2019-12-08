@@ -106,9 +106,12 @@ input[type=button]:active, button:active {
   height: 0;
   overflow: hidden;
 }
+.loading #quiz {
+  display: none;
+}
 </style>
 </head>
-<body>
+<body class="loading">
 <div id="quiz">
   <h1>{{locale.title}}</h1>
   <p>{{locale.answers}}: {{correct}} {{locale.correct}}, {{wrong}} {{locale.wrong}}. ({{score}}%)</p>
@@ -267,6 +270,7 @@ const app = new Vue({
     }
   }
 })
+document.querySelector('body').classList.remove('loading')
 </script>
 </body>
 </html>
