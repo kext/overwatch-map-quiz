@@ -176,10 +176,10 @@ const en = () => ({
   },
 })
 const sample = a => a[Math.floor(Math.random() * a.length)]
-const sample_n = (a, n) => {
-  let r = []
+const sampleN = (a, n) => {
+  const r = []
   while (r.length < n && r.length < a.length) {
-    let i = Math.floor(Math.random() * a.length)
+    const i = Math.floor(Math.random() * a.length)
     if (!r.includes(i)) {
       r.push(i)
     }
@@ -187,35 +187,31 @@ const sample_n = (a, n) => {
   return r.map(i => a[i])
 }
 const question = (number) => {
-  let selection = sample_n(images.maps, 4)
-  let correct = Math.floor(Math.random() * selection.length)
+  const selection = sampleN(images.maps, 4)
+  const correct = Math.floor(Math.random() * selection.length)
   if (Math.random() < 0.5) {
-    let question = l => l.whichMap(l.map[selection[correct].map])
-    let answers = selection.map(m => {
-      return {
-        img: 'img/' + sample(m.images),
-      }
-    })
+    const text = l => l.whichMap(l.map[selection[correct].map])
+    const answers = selection.map(m => ({
+      img: 'img/' + sample(m.images),
+    }))
     return {
       number,
       answers,
       correct,
-      text: question,
+      text,
       selected: -1,
     }
   } else {
-    let question = l => l.whichMap(l.that)
-    let img = 'img/' + sample(selection[correct].images)
-    let answers = selection.map(m => {
-      return {
-        text: l => l.map[m.map],
-      }
-    })
+    const text = l => l.whichMap(l.that)
+    const img = 'img/' + sample(selection[correct].images)
+    const answers = selection.map(m => ({
+      text: l => l.map[m.map],
+    }))
     return {
       number,
       answers,
       correct,
-      text: question,
+      text,
       img,
       selected: -1,
     }
@@ -240,7 +236,7 @@ const app = new Vue({
         p.push(this.nextQuestion.img)
       }
       for (let i = 0; i < this.nextQuestion.answers.length; ++i) {
-        let a = this.nextQuestion.answers[i]
+        const a = this.nextQuestion.answers[i]
         if (a.img && !p.includes(a.img)) p.push(a.img)
       }
       return p
