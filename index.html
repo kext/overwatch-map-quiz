@@ -138,8 +138,8 @@ const en = () => ({
   "correct": n => n + " correct",
   "wrong": n => n + " wrong",
   "nextQuestion": "Next Question",
-  "whichMap": s => "Which map is " + s + "?",
-  "that": "this",
+  "whichMapIs": s => "Which map is " + s + "?",
+  "whichMapIsThis": "Which map is this?",
   "map": {
     "blizzard-world": "Blizzard World",
     "busan-downtown": "Busan Downtown",
@@ -189,7 +189,7 @@ const question = (number) => {
   const selection = sampleN(images.maps, 4)
   const correct = Math.floor(Math.random() * selection.length)
   if (Math.random() < 0.5) {
-    const text = l => l.whichMap(l.map[selection[correct].map])
+    const text = l => l.whichMapIs(l.map[selection[correct].map])
     const answers = selection.map(m => ({
       img: 'img/' + sample(m.images),
     }))
@@ -201,7 +201,7 @@ const question = (number) => {
       selected: -1,
     }
   } else {
-    const text = l => l.whichMap(l.that)
+    const text = l => l.whichMapIsThis
     const img = 'img/' + sample(selection[correct].images)
     const answers = selection.map(m => ({
       text: l => l.map[m.map],
