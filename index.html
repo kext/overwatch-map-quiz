@@ -121,7 +121,7 @@ input[type=button]:active, button:active {
   </div>
   <div class="answers" :class="{choosing: question.selected === -1}">
     <div class="answer" v-for="(a, i) in question.answers" :key="i" :class="answerClass(i)" @click="answer(i)">
-      <div v-if="a.img"><img :key="a.img" :src="a.img" alt=""/></div>
+      <div v-if="a.img"><img :src="a.img" alt=""/></div>
       <div v-if="a.text">{{a.text(locale)}}</div>
     </div>
   </div>
