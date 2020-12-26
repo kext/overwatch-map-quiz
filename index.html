@@ -108,6 +108,29 @@ input[type=button]:active, button:active {
 .loading #quiz {
   display: none;
 }
+@media (prefers-color-scheme: dark) {
+  html {
+    background: #333;
+    color: #ccc;
+  }
+  p.img, .answer {
+    border-color: #666;
+  }
+  .answers.choosing .answer:hover {
+    background: #444;
+  }
+  input[type=button], button {
+    border-color: #666;
+    background: #333;
+    color: #ccc;
+  }
+  input[type=button]:hover, button:hover {
+    background: #444;
+  }
+  input[type=button]:active, button:active {
+    background: #555;
+  }
+}
 </style>
 </head>
 <body class="loading">
