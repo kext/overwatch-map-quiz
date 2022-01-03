@@ -214,7 +214,7 @@ const sampleN = (a, n) => {
 const question = (number) => {
   const selection = sampleN(maps, 4)
   const correct = rnd(selection.length)
-  if (Math.random() < 0.5) {
+  if (rnd(2) < 1) {
     const text = l => l.whichMapIs(l.map[selection[correct].n])
     const answers = selection.map(m => ({
       img: image(m)
