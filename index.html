@@ -151,7 +151,7 @@ input[type=button]:active, button:active {
   <p v-if="question.selected &gt;= 0" class="right"><button @click="newQuestion">{{locale.nextQuestion}}</button></p>
   <div class="preload"><img v-for="p in preload" :key="p" :src="p" alt=""/></div>
 </div>
-<script src="vue.min.js"></script>
+<script src="vue.global.prod.js"></script>
 <script>
 const maps = [{"n":"blizzard-world","i":17},{"n":"busan-downtown","i":11},{"n":"busan-meka-base","i":12},{"n":"busan-sanctuary","i":9},{"n":"dorado","i":17},{"n":"eichenwalde","i":11},{"n":"hanamura","i":9},{"n":"havana","i":21},{"n":"hollywood","i":13},{"n":"horizon-lunar-colony","i":13},{"n":"ilios-lighthouse","i":8},{"n":"ilios-ruins","i":7},{"n":"ilios-well","i":7},{"n":"junkertown","i":16},{"n":"kings-row","i":13},{"n":"lijiang-tower-control-center","i":8},{"n":"lijiang-tower-garden","i":8},{"n":"lijiang-tower-night-market","i":8},{"n":"nepal-sanctum","i":9},{"n":"nepal-shrine","i":8},{"n":"nepal-village","i":8},{"n":"numbani","i":13},{"n":"oasis-city-center","i":10},{"n":"oasis-gardens","i":11},{"n":"oasis-university","i":9},{"n":"paris","i":16},{"n":"rialto","i":16},{"n":"route-66","i":14},{"n":"temple-of-anubis","i":11},{"n":"volskaya-industries","i":10},{"n":"watchpoint-gibraltar","i":18}]
 const en = () => ({
@@ -242,14 +242,15 @@ const question = (number) => {
     }
   }
 }
-const app = new Vue({
-  el: '#quiz',
-  data: {
-    locale: en(),
-    correct: 0,
-    wrong: 0,
-    question: question(1),
-    nextQuestion: question(2),
+const app = Vue.createApp({
+  data() {
+    return {
+      locale: en(),
+      correct: 0,
+      wrong: 0,
+      question: question(1),
+      nextQuestion: question(2),
+    }
   },
   computed: {
     score() {
@@ -289,7 +290,7 @@ const app = new Vue({
       }
     }
   }
-})
+}).mount('#quiz')
 document.querySelector('body').classList.remove('loading')
 </script>
 </body>
