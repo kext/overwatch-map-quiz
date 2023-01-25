@@ -1,0 +1,125 @@
+html {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 10px;
+}
+@media (min-width: 500px) and (min-height: 500px) {
+  html {
+    font-size: 2vmin;
+  }
+}
+@media (min-width: 800px) and (min-height: 800px) {
+  html {
+    font-size: 16px;
+  }
+}
+body {
+  margin: 1em;
+}
+h1 {
+  font-size: 1.5em;
+  margin: 0 0 0.333em;
+}
+h2 {
+  font-size: 1.2em;
+  margin: 0 0 0.417em;
+}
+p {
+  margin: 0 0 0.5em;
+}
+a {
+  color: #36a;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+#quiz {
+  margin: 0 auto;
+  max-width: 50em;
+}
+.answers {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 0 -0.5em;
+}
+.answer {
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  text-align: center;
+  flex-grow: 1;
+  width: 17em;
+  margin: 0 0 0.5em 0.5em;
+  cursor: pointer;
+  min-height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.answer img {
+  max-width: 25em;
+}
+.answer.correct {
+  background: #1c2;
+}
+.answer.wrong {
+  background: #c12;
+}
+.answers.choosing .answer:hover {
+  background: #eee;
+}
+img {
+  width: 100%;
+  vertical-align: middle;
+}
+p.img {
+  border: 1px solid #ccc;
+  padding: 1px;
+}
+.right {
+  text-align: right;
+}
+input[type=button], button {
+  font: inherit;
+  border: 1px solid #ccc;
+  outline: none;
+  padding: 0.5em;
+  background: #eee;
+  color: #333;
+}
+input[type=button]:hover, button:hover {
+  background: #ddd;
+}
+input[type=button]:active, button:active {
+  background: #ccc;
+}
+.preload {
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.loading #quiz {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  html {
+    background: #333;
+    color: #ccc;
+  }
+  p.img, .answer {
+    border-color: #666;
+  }
+  .answers.choosing .answer:hover {
+    background: #444;
+  }
+  input[type=button], button {
+    border-color: #666;
+    background: #333;
+    color: #ccc;
+  }
+  input[type=button]:hover, button:hover {
+    background: #444;
+  }
+  input[type=button]:active, button:active {
+    background: #555;
+  }
+}
